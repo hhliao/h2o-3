@@ -9,7 +9,9 @@ import h2o
 
 def h2ols():
     """
-    Testing the h2o.init() command here.
+    h2o.ls()
+
+    Testing the h2o.ls() command here.
 
     :return: none if test passes
     """
