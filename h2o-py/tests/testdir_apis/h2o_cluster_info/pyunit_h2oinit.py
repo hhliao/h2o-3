@@ -6,6 +6,19 @@ sys.path.insert(1,"../../../")
 from tests import pyunit_utils
 import h2o
 
+# DISCLAMINER
+#
+# The main function of API tests is to make sure that changes to the API are captured
+# before the customers do.  This is to prevent breaking the customer code.  If the
+# changes are necessary, we will have the chance to warn them about the changes.
+#
+# All API tests should be short and fast to run.  The main purposes of API tests are to
+# make sure that the command in its most popular forms run correctly when user types in
+# correct input arguments.  Light weight checking will be provided on the command output
+# to make sure that we are getting the correct responses.
+#
+# For exhaustive tests using all possible combination of input arguments, making sure all
+# responses of the API commands are correct should be done elsewhere.
 
 def h2oinit():
     """
@@ -18,13 +31,20 @@ def h2oinit():
     :return: none if test passes or error message otherwise
     """
     # call with no arguments
+    print("Testing h2o.init() command...")
     try:
-        h2o.init(strict_version_check=False)
+        h2o.init()
+        print("h2o.init() command works!")
     except Exception as e:  # some errors are okay like version mismatch
-        print("In exception mode")
         assert "Version mismatch." in e.args[0], "Wrong exception messages found.  h2o.init() command not working"
 
-    # try to start a cluster and test out various commands
+    try:
+        h2o.init(strict_version_check=False)
+        print("h2o.init(strict_version_check) command works!")
+    except Exception as e:  # some errors are okay like version mismatch
+        print("h2o.init(strict_version_check) command not working.")
+
+    # try to join a cluster and test out various command arguments
     ipS = "127.0.0.1"
     portS = "54321"
     nthread = 2
@@ -36,11 +56,14 @@ def h2oinit():
     try:
         h2o.init(ip=ipS, port=portS, nthreads=nthread, max_mem_size=max_mem_size, min_mem_size=min_mem_size,
                  start_h2o=start_h2o, strict_version_check=strict_version_check)
+        print("Command h2o.init(ip=ipS, port=portS, nthreads=nthread, max_mem_size=max_mem_size, "
+              "min_mem_size=min_mem_size,start_h2o=start_h2o, strict_version_check=strict_version_check) works!")
     except Exception as e:  # some errors are okay like version mismatch
-        assert "H2OConnectionError: Unexpected HTTP error:" in e.args[0], "Wrong exception messages found.  " \
-                                                                          "h2o.init() command not working"
+        assert "H2OConnectionError: Unexpected HTTP error:" in e.args[0], \
+            "h2o.init(ip=ipS, port=portS, nthreads=nthread, max_mem_size=max_mem_size, min_mem_size=min_mem_size," \
+            "start_h2o=start_h2o, strict_version_check=strict_version_check) command not working"
 
-
+    sys.stdout.flush()
 if __name__ == "__main__":
     pyunit_utils.standalone_test(h2oinit)
 else:
